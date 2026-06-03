@@ -89,6 +89,7 @@ A newly created project includes:
 
 - Windows
 - Git
+- Cmake
 - Internet connection (for downloading dependencies)
 
 ---

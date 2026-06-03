@@ -2,7 +2,8 @@ param(
     [string]$BaseDir
 )
 
-function Show-Menu {
+function Show-Menu
+{
     Clear-Host
     Write-Host "===============================" -ForegroundColor Cyan
     Write-Host "     PROJECT TOOL MENU"
@@ -12,13 +13,14 @@ function Show-Menu {
     Write-Host "==============================="
 }
 
-function Create-Project {
-
+function Create-Project
+{
     Write-Host "`n=== Create New Project ===" -ForegroundColor Green
 
     $ProjectName = Read-Host "Project name"
     
-	if (-not $BaseDir) {
+	if (-not $BaseDir)
+	{
 		$BaseDir = Read-Host "Base directory (e.g. D:\Projects)"
 	}
     $GitUrl      = Read-Host "GitHub repo URL (press Enter to skip)"
@@ -30,7 +32,8 @@ function Create-Project {
 
     $ProjectPath = Join-Path $BaseDir $ProjectName
 
-    if (Test-Path $ProjectPath) {
+    if (Test-Path $ProjectPath)
+	{
         Write-Host "`nERROR: Project folder already exists!" -ForegroundColor Red
         Start-Sleep 2
         return
@@ -44,8 +47,10 @@ function Create-Project {
     New-Item -ItemType Directory -Path $ProjectPath | Out-Null
 
     $extra = Read-Host "Override folders (space separated) or press Enter"
-    if ($extra.Trim() -ne "") {
-        $extra.Split(" ") | ForEach-Object {
+    if ($extra.Trim() -ne "")
+	{
+        $extra.Split(" ") | ForEach-Object
+		{
             New-Item -ItemType Directory -Path (Join-Path $ProjectPath $_) -Force | Out-Null
         }
     }
@@ -70,7 +75,8 @@ function Create-Project {
     # -----------------------------
     Write-Host "`nInitializing Git..." -ForegroundColor Yellow
 
-    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command git -ErrorAction SilentlyContinue))
+	{
         Write-Host "ERROR: Git is not installed or not in PATH!" -ForegroundColor Red
         return
     }
@@ -80,11 +86,13 @@ function Create-Project {
     git init | Out-Null
     git branch -M main
 
-    if ($GitUrl.Trim() -ne "") {
+    if ($GitUrl.Trim() -ne "")
+	{
         git remote add origin $GitUrl
         Write-Host "GitHub remote connected." -ForegroundColor Green
     }
-    else {
+    else
+	{
         Write-Host "No GitHub URL provided. Skipping remote setup." -ForegroundColor DarkGray
     }
 
@@ -97,16 +105,26 @@ function Create-Project {
 # -----------------------------
 # MAIN LOOP
 # -----------------------------
-while ($true) {
-    Show-Menu
-    $choice = Read-Host "Select option"
+while ($true)
+{
+	if (-not $BaseDir)
+	{
+		Show-Menu
+		$choice = Read-Host "Select option"
 
-    switch ($choice) {
-        "1" { Create-Project }
-        "2" { break }
-        default {
-            Write-Host "Invalid option" -ForegroundColor Red
-            Start-Sleep 1
-        }
-    }
+		switch ($choice)
+		{
+			"1" { Create-Project }
+			"2" { break }
+			default
+			{
+				Write-Host "Invalid option" -ForegroundColor Red
+				Start-Sleep 1
+			}
+		}
+	}
+	else
+	{
+		Create-Project
+	}
 }

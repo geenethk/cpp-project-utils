@@ -63,12 +63,57 @@ function Create-Project
     # -----------------------------
     # Copy template files
     # -----------------------------
-    Write-Host "`nCopying templates..." -ForegroundColor Yellow
+	Write-Host "`nCopying templates..." -ForegroundColor Yellow
 
-    Copy-Item "$TemplateDir\vcpkg.json" "$ProjectPath\" -ErrorAction SilentlyContinue
-    Copy-Item "$TemplateDir\CMakeLists.txt" "$ProjectPath\" -ErrorAction SilentlyContinue
-    Copy-Item "$TemplateDir\CMakePresets.json" "$ProjectPath\" -ErrorAction SilentlyContinue
-    Copy-Item "$TemplateDir\.gitignore" "$ProjectPath\" -ErrorAction SilentlyContinue
+	Copy-Item "$TemplateDir\vcpkg.json" "$ProjectPath\" -ErrorAction SilentlyContinue
+	Copy-Item "$TemplateDir\CMakeLists.txt" "$ProjectPath\" -ErrorAction SilentlyContinue
+	Copy-Item "$TemplateDir\CMakePresets.json" "$ProjectPath\" -ErrorAction SilentlyContinue
+	Copy-Item "$TemplateDir\.gitignore" "$ProjectPath\" -ErrorAction SilentlyContinue
+
+	# Update vcpkg.json
+	$VcpkgFile = Join-Path $ProjectPath "vcpkg.json"
+
+	if (Test-Path $VcpkgFile)
+	{
+		$json = Get-Content $VcpkgFile -Raw | ConvertFrom-Json
+		$json.name = $ProjectName.ToLower()
+
+		$json | ConvertTo-Json -Depth 10 | Set-Content $VcpkgFile
+	}
+	
+	# -----------------------------
+	# Detect CMake version
+	# -----------------------------
+	$CMakeVersion = $null
+	if (Get-Command cmake -ErrorAction SilentlyContinue)
+	{
+		$Output = cmake --version 2>$null | Out-String
+		if ($Output -match "cmake version\s+(\d+\.\d+)")
+		{
+			$CMakeVersion = $matches[1]
+		}
+	}
+
+	if (-not $CMakeVersion)
+	{
+		Write-Host "WARNING: Could not detect CMake version. Using fallback." -ForegroundColor Yellow
+		$CMakeVersion = "3.20"
+	}
+
+	# -----------------------------
+	# Customize CMakeLists.txt
+	# -----------------------------
+	$CmakeFile = Join-Path $ProjectPath "CMakeLists.txt"
+
+	if (Test-Path $CmakeFile)
+	{
+		$content = Get-Content $CmakeFile -Raw
+
+		$content = $content.Replace("%VERSION_HERE%", $CMakeVersion)
+		$content = $content.Replace("%PROJECT_NAME_HERE%", $ProjectName)
+
+		Set-Content $CmakeFile $content
+	}
 
     # -----------------------------
     # Git setup
@@ -105,9 +150,9 @@ function Create-Project
 # -----------------------------
 # MAIN LOOP
 # -----------------------------
-while ($true)
+if (-not $BaseDir)
 {
-	if (-not $BaseDir)
+	while ($true)
 	{
 		Show-Menu
 		$choice = Read-Host "Select option"
@@ -123,8 +168,9 @@ while ($true)
 			}
 		}
 	}
-	else
-	{
-		Create-Project
-	}
 }
+else
+{
+	Create-Project
+}
+exit

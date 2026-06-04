@@ -15,14 +15,14 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/.build/${presetName}",
       "cacheVariables":
-	  {
+	    {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-
+        "VCPKG_MANIFEST_MODE": "OFF",
         "CMAKE_TOOLCHAIN_FILE":
-		{
-		  "type": "STRING",
-		  "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-		},
+        {
+          "type": "STRING",
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
 
         "VCPKG_TARGET_TRIPLET": "x64-windows"
       }
@@ -33,7 +33,7 @@
       "displayName": "Debug",
       "inherits": "default",
       "cacheVariables":
-	  {
+	    {
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
@@ -43,7 +43,7 @@
       "displayName": "Release",
       "inherits": "default",
       "cacheVariables":
-	  {
+	    {
         "CMAKE_BUILD_TYPE": "Release"
       }
     }

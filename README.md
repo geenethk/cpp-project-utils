@@ -21,6 +21,7 @@ Create a ready-to-build C++ project in minutes without manually setting up your 
 - 🏗️ Generate essential CMake project files
 - 📁 Customize project folder structure
 - 🖱️ Windows Explorer context menu integration
+- 📦 Collect and combine license files from all vcpkg-installed dependencies into a single file for distribution with the executable
 
 ---
 

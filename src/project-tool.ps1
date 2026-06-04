@@ -70,8 +70,8 @@ function Create-Project
 	Copy-Item "$TemplateDir\CMakePresets.json" "$ProjectPath\" -ErrorAction SilentlyContinue
 	Copy-Item "$TemplateDir\.gitignore" "$ProjectPath\" -ErrorAction SilentlyContinue
 	
-	New-Item -ItemType Directory -Force "$ProjectPath\cmake" | Out-Null
-	Copy-Item "$TemplateDir\cmake\generate-licenses.cmake" "$ProjectPath\cmake" -ErrorAction SilentlyContinue
+	New-Item -ItemType Directory -Force "$ProjectPath\.cmake" | Out-Null
+	Copy-Item "$TemplateDir\.cmake\generate-licenses.cmake" "$ProjectPath\.cmake" -ErrorAction SilentlyContinue
 
 	# Update vcpkg.json
 	$VcpkgFile = Join-Path $ProjectPath "vcpkg.json"
